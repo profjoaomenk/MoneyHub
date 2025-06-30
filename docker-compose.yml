@@ -1,0 +1,66 @@
+services:
+  mysql-dimdim:
+    container_name: mysql-dimdim
+    build:
+      context: ../mysql-dimdim-2
+      dockerfile: Dockerfile.mysql
+    ports:
+      - "3306:3306" # Deixando somente "3306" o Banco só será acessado por Containers que estiverem na mesma rede (dimdim-network)
+    networks:
+      - dimdim-network
+    volumes:
+      - mysql-dimdim-data:/var/lib/mysql
+    restart: on-failure
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 20s
+      retries: 10
+
+  api-dimdim:
+    container_name: api-dimdim
+    build:
+      context: ../transacoes-api-2
+      dockerfile: Dockerfile.api
+    ports:
+      - "8080:8080"
+    networks:
+      - dimdim-network
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-dimdim:3306/${MYSQL_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    depends_on:
+      mysql-dimdim:
+        condition: service_healthy
+    restart: on-failure
+
+  api-transacoes-dotnet:
+    container_name: apitransacoes
+    build:
+      context: ../ApiTransacoes
+      dockerfile: docker/Dockerfile
+    ports:
+      - "5000:8080"
+    networks:
+      - dimdim-network
+    depends_on:
+      mysql-dimdim:
+        condition: service_healthy
+    restart: on-failure
+
+networks:
+  dimdim-network:
+
+volumes:
+  mysql-dimdim-data:
