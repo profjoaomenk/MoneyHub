@@ -48,7 +48,7 @@ services:
   api-transacoes-dotnet:
     container_name: apitransacoes
     build:
-      context: ../ApiTransacoes
+      context: ../ApiTransacoes-2
       dockerfile: docker/Dockerfile
     ports:
       - "5000:8080"
