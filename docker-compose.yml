@@ -54,6 +54,10 @@ services:
       - "5000:8080"
     networks:
       - dimdim-network
+    env_file:
+      - .env
+    environment:
+      ConnectionStrings__DefaultConnection: ${ConnectionStrings__DefaultConnection}
     depends_on:
       mysql-dimdim:
         condition: service_healthy
