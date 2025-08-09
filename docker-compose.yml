@@ -57,7 +57,7 @@ services:
     env_file:
       - .env
     environment:
-      ConnectionStrings__DefaultConnection: ${ConnectionStrings__DefaultConnection}
+      ConnectionStrings__DefaultConnection: ${ConnectionStrings}
     depends_on:
       mysql-dimdim:
         condition: service_healthy
