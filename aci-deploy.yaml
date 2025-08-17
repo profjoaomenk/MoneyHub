@@ -1,0 +1,79 @@
+apiVersion: '2021-10-01'
+location: eastus  # ajuste conforme sua região
+name: dimdim-group
+properties:
+  containers:
+    - name: mysql-dimdim
+      properties:
+        image: moneyhubrm9999.azurecr.io/mysql-dimdim:v1
+        ports:
+          - port: 3306
+        environmentVariables:
+          - name: MYSQL_ROOT_PASSWORD
+            value: ${MYSQL_ROOT_PASSWORD}
+          - name: MYSQL_DATABASE
+            value: ${MYSQL_DATABASE}
+          - name: MYSQL_USER
+            value: ${MYSQL_USER}
+          - name: MYSQL_PASSWORD
+            value: ${MYSQL_PASSWORD}
+        resources:
+          requests:
+            cpu: 1
+            memoryInGB: 1
+        volumeMounts:
+          - name: mysqldata
+            mountPath: /var/lib/mysql
+    - name: api-dimdim
+      properties:
+        image: moneyhubrm9999.azurecr.io/api-dimdim:v1
+        ports:
+          - port: 8080
+        environmentVariables:
+          - name: SPRING_DATASOURCE_URL
+            value: ${SPRING_DATASOURCE_URL}
+          - name: SPRING_DATASOURCE_USERNAME
+            value: ${SPRING_DATASOURCE_USERNAME}
+          - name: SPRING_DATASOURCE_PASSWORD
+            value: ${SPRING_DATASOURCE_PASSWORD}
+        resources:
+          requests:
+            cpu: 1
+            memoryInGB: 1
+    - name: api-transacoes-dotnet
+      properties:
+        image: moneyhubrm9999.azurecr.io/api-transacoes:v1
+        ports:
+          - port: 5000
+        environmentVariables:
+          - name: ASPNETCORE_URLS
+            value: "http://+:5000"
+          - name: ConnectionStrings__DefaultConnection
+            value: ${CONNECTIONSTRINGS}
+        resources:
+          requests:
+            cpu: 1
+            memoryInGB: 1
+  imageRegistryCredentials:
+    - server: moneyhubrm9999.azurecr.io
+      username: ${ACR_USERNAME}  # usuário admin ou clientId do service principal
+      password: ${ACR_PASSWORD}  # senha do admin user ou secret do service principal
+  osType: Linux
+  ipAddress:
+    type: Public
+    ports:
+      - port: 3306
+        protocol: tcp
+      - port: 8080
+        protocol: tcp
+      - port: 5000
+        protocol: tcp
+  restartPolicy: Always
+  volumes:
+    - name: mysqldata
+      azureFile:
+        shareName: mysql-dimdim-share
+        storageAccountName: ${STORAGE_ACCOUNT}
+        storageAccountKey: ${STORAGE_KEY}
+tags: {}
+type: Microsoft.ContainerInstance/containerGroups
