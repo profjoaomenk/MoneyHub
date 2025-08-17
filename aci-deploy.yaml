@@ -55,7 +55,7 @@ properties:
             cpu: 1
             memoryInGB: 1
   imageRegistryCredentials:
-    - server: moneyhubrm9999.azurecr.io
+    - server: ${ACR_SERVER}      # Registro do Servidor
       username: ${ACR_USERNAME}  # usuário admin ou clientId do service principal
       password: ${ACR_PASSWORD}  # senha do admin user ou secret do service principal
   osType: Linux
@@ -72,7 +72,7 @@ properties:
   volumes:
     - name: mysqldata
       azureFile:
-        shareName: mysql-dimdim-share
+        shareName: ${FILE_SHARE}
         storageAccountName: ${STORAGE_ACCOUNT}
         storageAccountKey: ${STORAGE_KEY}
 tags: {}
