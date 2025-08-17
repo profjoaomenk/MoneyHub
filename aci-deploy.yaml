@@ -1,11 +1,11 @@
 apiVersion: '2021-10-01'
-location: eastus  # ajuste conforme sua região
-name: dimdim-group
+location: eastus
+name: money-hub-compose
 properties:
   containers:
     - name: mysql-dimdim
       properties:
-        image: moneyhubrm9999.azurecr.io/mysql-dimdim:v1
+        image: ${ACR_SERVER}.azurecr.io/mysql-dimdim:v1
         ports:
           - port: 3306
         environmentVariables:
@@ -26,7 +26,7 @@ properties:
             mountPath: /var/lib/mysql
     - name: api-dimdim
       properties:
-        image: moneyhubrm9999.azurecr.io/api-dimdim:v1
+        image: ${ACR_SERVER}.azurecr.io/api-dimdim:v1
         ports:
           - port: 8080
         environmentVariables:
@@ -42,7 +42,7 @@ properties:
             memoryInGB: 1
     - name: api-transacoes-dotnet
       properties:
-        image: moneyhubrm9999.azurecr.io/api-transacoes:v1
+        image: ${ACR_SERVER}.azurecr.io/api-transacoes:v1
         ports:
           - port: 5000
         environmentVariables:
@@ -55,9 +55,9 @@ properties:
             cpu: 1
             memoryInGB: 1
   imageRegistryCredentials:
-    - server: ${ACR_SERVER}      # Registro do Servidor
-      username: ${ACR_USERNAME}  # usuário admin ou clientId do service principal
-      password: ${ACR_PASSWORD}  # senha do admin user ou secret do service principal
+    - server: ${ACR_SERVER}
+      username: ${ACR_USERNAME}
+      password: ${ACR_PASSWORD}
   osType: Linux
   ipAddress:
     type: Public
