@@ -1,5 +1,5 @@
 apiVersion: '2021-10-01'
-location: $RESOURCE_GROUP
+location: $LOCATION
 name: money-hub-compose
 properties:
   containers:
