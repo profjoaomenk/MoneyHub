@@ -1,5 +1,5 @@
 apiVersion: '2021-10-01'
-location: eastus
+location: $RESOURCE_GROUP
 name: money-hub-compose
 properties:
   containers:
